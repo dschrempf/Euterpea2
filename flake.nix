@@ -14,7 +14,7 @@
       system:
       let
         haskellPackageNames = [
-          "Euterpea2"
+          "Euterpea"
         ];
         ghcVersion = "ghc90";
         haskellMkPackage = hps: nm: hps.callCabal2nix nm (./. + "/${nm}") { };
@@ -23,7 +23,7 @@
             haskellPackages = supern.haskell.packages.${ghcVersion}.override {
               overrides = selfh: superh:
                 {
-                  Euterpea2 = selfh.callCabal2nix "Euterpea2" ./. rec { };
+                  Euterpea = selfh.callCabal2nix "Euterpea" ./. rec { };
                 };
             };
           }
@@ -34,11 +34,11 @@
           inherit overlays;
         };
         hpkgs = pkgs.haskellPackages;
-        Euterpea2Pkgs = nixpkgs.lib.genAttrs haskellPackageNames (n: hpkgs.${n});
-        Euterpea2PkgsDev = builtins.mapAttrs (_: x: pkgs.haskell.lib.doBenchmark x) Euterpea2Pkgs;
+        EuterpeaPkgs = nixpkgs.lib.genAttrs haskellPackageNames (n: hpkgs.${n});
+        EuterpeaPkgsDev = builtins.mapAttrs (_: x: pkgs.haskell.lib.doBenchmark x) EuterpeaPkgs;
       in
       {
-        packages = Euterpea2Pkgs // { default = Euterpea2Pkgs.Euterpea2; };
+        packages = EuterpeaPkgs // { default = EuterpeaPkgs.Euterpea; };
 
         devShells.default = hpkgs.shellFor {
           # shellHook =
@@ -48,7 +48,7 @@
           #   ''
           #     export PATH="${scripts}:$PATH"
           #   '';
-          packages = _: (builtins.attrValues Euterpea2PkgsDev);
+          packages = _: (builtins.attrValues EuterpeaPkgsDev);
           nativeBuildInputs = with pkgs; [
             # See https://github.com/NixOS/nixpkgs/issues/59209.
             bashInteractive
