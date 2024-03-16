@@ -14,7 +14,7 @@
       theseHpkgNames = [
         "Euterpea"
       ];
-      thisGhcVersion = "ghc924";
+      thisGhcVersion = "ghc94";
       hOverlay = selfn: supern: {
         haskell = supern.haskell // {
           packageOverrides = selfh: superh:
