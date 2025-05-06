@@ -6,25 +6,28 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
   outputs =
-    { self
-    , flake-utils
-    , nixpkgs
+    {
+      self,
+      flake-utils,
+      nixpkgs,
     }:
     let
       theseHpkgNames = [
         "Euterpea"
       ];
-      thisGhcVersion = "ghc96";
+      thisGhcVersion = "ghc98";
       hOverlay = selfn: supern: {
         haskell = supern.haskell // {
-          packageOverrides = selfh: superh:
-            supern.haskell.packageOverrides selfh superh //
-              {
-                Euterpea = selfh.callCabal2nix "Euterpea" ./. { };
-              };
+          packageOverrides =
+            selfh: superh:
+            supern.haskell.packageOverrides selfh superh
+            // {
+              Euterpea = selfh.callCabal2nix "Euterpea" ./. { };
+            };
         };
       };
-      perSystem = system:
+      perSystem =
+        system:
         let
           pkgs = import nixpkgs {
             inherit system;
@@ -36,7 +39,9 @@
           theseHpkgsDev = builtins.mapAttrs (_: x: hlib.doBenchmark x) theseHpkgs;
         in
         {
-          packages = theseHpkgs // { default = theseHpkgs.Euterpea; };
+          packages = theseHpkgs // {
+            default = theseHpkgs.Euterpea;
+          };
 
           devShells.default = hpkgs.shellFor {
             packages = _: (builtins.attrValues theseHpkgsDev);
